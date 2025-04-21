@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Management</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>Employees List</h1>
+  <table id="employeeTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Salary</th>
+        <th>Designation</th>
+        <th>Department</th>
+        <th>Joined</th>
+        <th>Left</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    fetch('http://localhost:5000/api/employees')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector("#employeeTable tbody");
+        data.forEach(emp => {
+          const row = `<tr>
+            <td>${emp.name}</td>
+            <td>${emp.age}</td>
+            <td>${emp.salary}</td>
+            <td>${emp.designation}</td>
+            <td>${emp.department}</td>
+            <td>${new Date(emp.dateOfJoining).toLocaleDateString()}</td>
+            <td>${emp.dateOfLeaving ? new Date(emp.dateOfLeaving).toLocaleDateString() : '-'}</td>
+          </tr>`;
+          tbody.innerHTML += row;
+        });
+      })
+      .catch(err => console.error("Failed to load employee data", err));
+  </script>
+</body>
+</html>

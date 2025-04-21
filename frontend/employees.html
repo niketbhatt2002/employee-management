@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee List</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      color: #fff;
+      background-color: #2d3e50;
+      padding: 20px 0;
+      margin-bottom: 30px;
+      border-radius: 5px;
+    }
+
+    table {
+      width: 80%;
+      margin: 0 auto;
+      border-collapse: collapse;
+      background-color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      padding: 12px 20px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    tbody {
+      font-size: 14px;
+    }
+
+    .container {
+      padding: 30px;
+    }
+
+    .error {
+      color: #ff0000;
+      font-weight: bold;
+    }
+
+    /* Add a button style to refresh data */
+    .refresh-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin: 20px 0;
+      display: block;
+      width: 200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .refresh-btn:hover {
+      background-color: #45a049;
+    }
+
+    /* Style for the search input */
+    .search-input {
+      width: 80%;
+      padding: 8px;
+      margin-bottom: 20px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Employee List</h1>
+
+    <!-- Search input -->
+    <input type="text" id="searchInput" class="search-input" placeholder="Search by Name, Designation, or Department" />
+
+    <!-- Button to refresh the employee list -->
+    <button class="refresh-btn" onclick="loadEmployees()">Refresh Employee List</button>
+
+    <table id="employeeTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Salary</th>
+          <th>Designation</th>
+          <th>Department</th>
+          <th>Date of Joining</th>
+          <th>Date of Leaving</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div id="message" class="error"></div>
+  </div>
+
+  <script>
+    let employees = [];
+
+    // Function to load the employee data
+    function loadEmployees() {
+      fetch('http://localhost:5000/api/employees')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          employees = data;
+          displayEmployees(employees);
+        })
+        .catch(error => {
+          console.error('❌ Error fetching employees:', error);
+          document.getElementById('message').textContent = 'Error fetching employee data. Please check the backend connection.';
+        });
+    }
+
+    // Function to display the employees in the table
+    function displayEmployees(data) {
+      const tbody = document.querySelector('#employeeTable tbody');
+      tbody.innerHTML = ''; // Clear existing table rows
+      data.forEach(emp => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${emp.id}</td>
+          <td>${emp.name}</td>
+          <td>${emp.age}</td>
+          <td>${emp.salary}</td>
+          <td>${emp.designation}</td>
+          <td>${emp.department}</td>
+          <td>${new Date(emp.dateOfJoining).toLocaleDateString()}</td>
+          <td>${emp.dateOfLeaving ? new Date(emp.dateOfLeaving).toLocaleDateString() : '-'}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Function to filter employees based on the search input
+    function filterEmployees(query) {
+      const filteredEmployees = employees.filter(emp => {
+        return emp.name.toLowerCase().includes(query) ||
+               emp.designation.toLowerCase().includes(query) ||
+               emp.department.toLowerCase().includes(query);
+      });
+      displayEmployees(filteredEmployees);
+    }
+
+    // Event listener for the search input
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      filterEmployees(query);
+    });
+
+    // Load employees on page load
+    window.onload = loadEmployees;
+  </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add New Employee</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      text-align: center;
+      color: #fff;
+      background-color: #2d3e50;
+      padding: 20px 0;
+      margin-bottom: 30px;
+      border-radius: 5px;
+    }
+
+    .container {
+      width: 50%;
+      margin: 0 auto;
+      padding: 30px;
+      background-color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    label {
+      display: block;
+      font-size: 16px;
+      margin: 10px 0 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .message {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .error {
+      color: #ff0000;
+    }
+
+    .success {
+      color: #28a745;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Add New Employee</h1>
+
+  <div class="container">
+    <form id="employeeForm">
+      <label for="name">Name</label>
+      <input type="text" name="name" id="name" required />
+
+      <label for="age">Age</label>
+      <input type="number" name="age" id="age" required />
+
+      <label for="salary">Salary</label>
+      <input type="number" name="salary" id="salary" required />
+
+      <label for="designation">Designation</label>
+      <input type="text" name="designation" id="designation" required />
+
+      <label for="department">Department</label>
+      <input type="text" name="department" id="department" required />
+
+      <label for="dateOfJoining">Date of Joining</label>
+      <input type="date" name="dateOfJoining" id="dateOfJoining" required />
+
+      <label for="dateOfLeaving">Date of Leaving</label>
+      <input type="date" name="dateOfLeaving" id="dateOfLeaving" />
+
+      <button type="submit">Add Employee</button>
+    </form>
+
+    <div id="message" class="message"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('employeeForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      // Convert empty string to null for dateOfLeaving
+      if (!data.dateOfLeaving) {
+        data.dateOfLeaving = null;
+      }
+
+      try {
+        const response = await fetch('http://localhost:5000/api/employees', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        const messageElement = document.getElementById('message');
+        if (response.ok) {
+          messageElement.textContent = '✅ Employee added successfully!';
+          messageElement.className = 'message success';
+          form.reset();
+        } else {
+          const error = await response.text();
+          messageElement.textContent = '❌ Error: ' + error;
+          messageElement.className = 'message error';
+        }
+      } catch (err) {
+        document.getElementById('message').textContent = '❌ Error connecting to server';
+        document.getElementById('message').className = 'message error';
+      }
+    });
+  </script>
+</body>
+</html>
