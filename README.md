@@ -31,7 +31,7 @@ This project allows you to add, view, and manage employee data such as name, age
 ```
 manage-employee-app/
 │
-├── backend/                         # Node.js + Express.js backend
+├── backend/                        # Node.js + Express.js backend
 │   ├── node_modules/               # Node dependencies
 │   ├── prisma/                     # Prisma ORM config & DB setup
 │   │   ├── schema.prisma           # Prisma data model
