@@ -1,7 +1,7 @@
 
 # 👩‍💼 Employee Management System
 
-A web-based Employee Management System built using **HTML**, **CSS**, **JavaScript (Frontend)** and **SQLite, NodeJS and ExpressJS (Backend)**.  
+A web-based Employee Management System built using **HTML**, **CSS**, **JavaScript (Frontend)**, **ReactJS** and **SQLite, NodeJS and ExpressJS (Backend)**.  
 This project allows you to add, view, and manage employee data such as name, age, salary, designation, department, date of joining, and date of leaving.
 
 ---
